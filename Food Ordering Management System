@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_ITEMS 10
+struct Food {
+    int id;
+    char name[30];
+    float price;
+};
+struct Order {
+    int foodId;
+    char foodName[30];
+    int quantity;
+    float price;
+    float total;
+};
+void displayMenu(struct Food menu[], int n)
+{
+    int i;
+    printf("\n========== FOOD MENU ==========\n");
+    printf("ID\tFood Item\t\tPrice\n");
+    printf("--------------------------------------\n");
+    for(i = 0; i < n; i++)
+    {
+        printf("%d\t%-20s Rs. %.2f\n",
+               menu[i].id,
+               menu[i].name,
+               menu[i].price);
+    }
+    printf("======================================\n");
+}
+int main()
+{
+    struct Food menu[MAX_ITEMS] = {
+        {1, "Burger", 120.00},
+        {2, "Pizza", 250.00},
+        {3, "French Fries", 100.00},
+        {4, "Sandwich", 80.00},
+        {5, "Pasta", 180.00},
+        {6, "Momos", 100.00},
+        {7, "Cold Drink", 60.00},
+        {8, "Coffee", 70.00},
+        {9, "Ice Cream", 90.00},
+        {10, "Biryani", 220.00}
+    };
+    struct Order orders[50];
+    int choice;
+    int orderCount = 0;
+    int id, quantity;
+    int i, found;
+    float grandTotal = 0;
+    char customerName[50];
+    printf("========================================\n");
+    printf("       FOOD ORDERING MANAGEMENT SYSTEM\n");
+    printf("========================================\n");
+    printf("\nEnter Customer Name: ");
+    fgets(customerName, sizeof(customerName), stdin);
+    customerName[strcspn(customerName, "\n")] = '\0';
+    do
+    {
+        printf("\n\n========== MAIN MENU ==========\n");
+        printf("1. Display Food Menu\n");
+        printf("2. Place Food Order\n");
+        printf("3. View Current Order\n");
+        printf("4. Generate Bill\n");
+        printf("5. Exit\n");
+        printf("===============================\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch(choice)
+        {
+            case 1:
+                displayMenu(menu, MAX_ITEMS);
+                break;
+
+            case 2:
+
+                displayMenu(menu, MAX_ITEMS);
+
+                printf("\nEnter Food ID: ");
+                scanf("%d", &id);
+
+                found = 0;
+
+                for(i = 0; i < MAX_ITEMS; i++)
+                {
+                    if(menu[i].id == id)
+                    {
+                        found = 1;
+
+                        printf("Enter Quantity: ");
+                        scanf("%d", &quantity);
+
+                        if(quantity <= 0)
+                        {
+                            printf("Invalid quantity!\n");
+                            break;
+                        }
+
+                        if(orderCount < 50)
+                        {
+                            orders[orderCount].foodId = menu[i].id;
+
+                            strcpy(orders[orderCount].foodName,
+                                   menu[i].name);
+
+                            orders[orderCount].quantity = quantity;
+                            orders[orderCount].price = menu[i].price;
+
+                            orders[orderCount].total =
+                                menu[i].price * quantity;
+
+                            grandTotal += orders[orderCount].total;
+
+                            orderCount++;
+
+                            printf("\nOrder added successfully!\n");
+                        }
+                        else
+                        {
+                            printf("Order limit reached!\n");
+                        }
+
+                        break;
+                    }
+                }
+
+                if(found == 0)
+                {
+                    printf("Invalid Food ID!\n");
+                }
+
+                break;
+
+            case 3:
+
+                if(orderCount == 0)
+                {
+                    printf("\nNo items ordered yet.\n");
+                }
+                else
+                {
+                    printf("\n========== CURRENT ORDER ==========\n");
+
+                    printf("%-20s %-10s %-10s\n",
+                           "Food Item", "Quantity", "Total");
+
+                    printf("----------------------------------------------\n");
+
+                    for(i = 0; i < orderCount; i++)
+                    {
+                        printf("%-20s %-10d Rs. %.2f\n",
+                               orders[i].foodName,
+                               orders[i].quantity,
+                               orders[i].total);
+                    }
+
+                    printf("----------------------------------------------\n");
+                    printf("Current Total: Rs. %.2f\n", grandTotal);
+                }
+
+                break;
+
+            case 4:
+
+                if(orderCount == 0)
+                {
+                    printf("\nNo order placed. Bill cannot be generated.\n");
+                }
+                else
+                {
+                    printf("\n\n============================================\n");
+                    printf("              FINAL BILL\n");
+                    printf("============================================\n");
+
+                    printf("Customer Name: %s\n", customerName);
+
+                    printf("--------------------------------------------\n");
+
+                    printf("%-20s %-8s %-10s\n",
+                           "Food Item", "Qty", "Amount");
+
+                    printf("--------------------------------------------\n");
+
+                    for(i = 0; i < orderCount; i++)
+                    {
+                        printf("%-20s %-8d Rs. %.2f\n",
+                               orders[i].foodName,
+                               orders[i].quantity,
+                               orders[i].total);
+                    }
+
+                    printf("--------------------------------------------\n");
+                    printf("Grand Total: Rs. %.2f\n", grandTotal);
+                    printf("============================================\n");
+
+                    printf("\nThank you for ordering!\n");
+                }
+
+                break;
+
+            case 5:
+                printf("\nThank you for using Food Ordering System!\n");
+                break;
+
+            default:
+                printf("\nInvalid choice! Please try again.\n");
+        }
+
+    } while(choice != 5);
+
+    return 0;
+}
